@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase/firebaseConfig"; // Importa a configuração do Firebase
-import { collection, getDocs } from "firebase/firestore"; // Funções do Firestore
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore"; // Funções do Firestore
 import { motion } from "framer-motion";
 import { getAuth, onAuthStateChanged } from "firebase/auth"; // Importando autenticação do Firebase
 import { useNavigate } from "react-router-dom"; // Para redirecionamento de navegação
-import { IoMdCloseCircle } from "react-icons/io"; // Ícone de X mais estilizado
+import { IoMdCloseCircle, IoMdCheckmarkCircle } from "react-icons/io"; // Ícone de X mais estilizado
 
 const PageAdmin = () => {
   const [users, setUsers] = useState([]);
@@ -32,12 +32,27 @@ const PageAdmin = () => {
   const fetchUsers = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "data-users"));
-      const usersList = querySnapshot.docs.map((doc) => doc.data());
+      const usersList = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setUsers(usersList); // Atualiza o estado com a lista de usuários
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
     } finally {
       setLoading(false); // Finaliza o estado de carregamento
+    }
+  };
+
+  // Função para atualizar o status de pagamento
+  const handleConfirmPayment = async (userId) => {
+    try {
+      const userRef = doc(db, "data-users", userId);
+      await updateDoc(userRef, {
+        paymentStatus: "concluído", // Atualiza o status do pagamento
+      });
+      alert("Pagamento confirmado!");
+      fetchUsers(); // Atualiza os dados após a confirmação
+    } catch (error) {
+      console.error("Erro ao confirmar pagamento:", error);
+      alert("Erro ao confirmar pagamento.");
     }
   };
 
@@ -100,12 +115,26 @@ const PageAdmin = () => {
             >
               <div className="flex items-center justify-between text-xl font-semibold text-gray-300">
                 {user.fullName}
-                {/* Ícone mais estilizado (X ou Check) */}
-                <IoMdCloseCircle className="text-red-500" size={24} />
+                {/* Ícone de pagamento */}
+                {user.paymentStatus === "concluído" ? (
+                  <IoMdCheckmarkCircle className="text-green-500" size={24} />
+                ) : (
+                  <IoMdCloseCircle className="text-red-500" size={24} />
+                )}
               </div>
 
               {/* Exibindo o apelido como subtítulo */}
               <h3 className="text-lg text-gray-400 font-medium mt-2">{user.nickname}</h3>
+
+              {/* Botão de Confirmar Pagamento, fora do dropdown e abaixo do apelido */}
+              {user.paymentStatus !== "concluído" && (
+                <button
+                  onClick={() => handleConfirmPayment(user.id)} // Confirma pagamento ao clicar
+                  className="mt-4 py-2 px-6 bg-green-500 text-white rounded-full text-sm shadow-md hover:bg-green-600 transition duration-300"
+                >
+                  Confirmar Pagamento
+                </button>
+              )}
 
               {/* Dropdown com as informações adicionais */}
               {activeIndex === index && (

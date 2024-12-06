@@ -3,7 +3,7 @@ import { auth } from "../firebase/firebaseConfig"; // Importando apenas o auth d
 import { signOut } from "firebase/auth"; // Importando diretamente o signOut do Firebase
 import { useNavigate } from "react-router-dom"; // Para navegação
 import { db } from "../firebase/firebaseConfig"; // Importando o Firestore
-import { doc, getDoc } from "firebase/firestore"; // Função para pegar dados do Firestore
+import { doc, getDoc, updateDoc } from "firebase/firestore"; // Função para pegar dados do Firestore e atualizar
 import { motion } from "framer-motion"; // Importando o Framer Motion
 
 const Welcome = () => {
@@ -38,7 +38,6 @@ const Welcome = () => {
             setLoading(false);
           }
         };
-        
 
         fetchUserData();
       } else {
@@ -67,14 +66,19 @@ const Welcome = () => {
     }
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     setPaymentConfirmed(true); // Marca o pagamento como confirmado
     setIsButtonDisabled(true); // Desabilita o botão após confirmação
-    // Atualiza o status de pagamento no Firestore (se necessário)
+    // Atualiza o status de pagamento no Firestore
     const userRef = doc(db, "data-users", user.uid);
-    updateDoc(userRef, {
-      paymentConfirmed: true // Adiciona um campo "paymentConfirmed" ao documento do usuário
-    });
+    try {
+      await updateDoc(userRef, {
+        paymentStatus: "pendente", // Define o status de pagamento como "pendente"
+      });
+      console.log("Status de pagamento atualizado para 'pendente'.");
+    } catch (error) {
+      console.error("Erro ao atualizar status de pagamento:", error);
+    }
   };
 
   // Renderiza um carregando enquanto as informações não estão prontas
