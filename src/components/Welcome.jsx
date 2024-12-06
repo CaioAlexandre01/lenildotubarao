@@ -68,8 +68,13 @@ const Welcome = () => {
   };
 
   const handlePayment = () => {
-    setPaymentConfirmed(true); // Ativa o feedback de pagamento confirmado
-    setIsButtonDisabled(true); // Desabilita o botão após o clique
+    setPaymentConfirmed(true); // Marca o pagamento como confirmado
+    setIsButtonDisabled(true); // Desabilita o botão após confirmação
+    // Atualiza o status de pagamento no Firestore (se necessário)
+    const userRef = doc(db, "data-users", user.uid);
+    updateDoc(userRef, {
+      paymentConfirmed: true // Adiciona um campo "paymentConfirmed" ao documento do usuário
+    });
   };
 
   // Renderiza um carregando enquanto as informações não estão prontas

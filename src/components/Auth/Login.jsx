@@ -3,7 +3,7 @@ import { signInWithEmailAndPassword } from "firebase/auth"; // Importa a funçã
 import { auth } from "../../firebase/firebaseConfig"; // Importa o auth
 import { useNavigate } from "react-router-dom"; // Importa o hook para navegação
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi"; // Ícones do react-icons
-import logo from '/logo.png'
+import logo from "/logo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -21,7 +21,17 @@ const Login = () => {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/dashboard");
     } catch (err) {
-      setError(err.message);
+      let errorMessage = "Erro ao fazer login. Tente novamente.";
+
+      if (err.code === "auth/user-not-found") {
+        errorMessage = "Usuário não encontrado. Verifique seu e-mail.";
+      } else if (err.code === "auth/wrong-password") {
+        errorMessage = "Senha incorreta. Tente novamente.";
+      } else if (err.code === "auth/invalid-email") {
+        errorMessage = "O e-mail fornecido é inválido.";
+      }
+
+      setError(errorMessage); // Define a mensagem de erro personalizada
     } finally {
       setLoading(false);
     }
@@ -53,54 +63,26 @@ const Login = () => {
           {/* Campo de Email */}
           <div className="relative mb-4 w-full">
             <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              className="w-full p-2 pl-10 bg-transparent text-white border-b-2 border-gray-600 outline-none"
-              required
-            />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full p-2 pl-10 bg-transparent text-white border-b-2 border-gray-600 outline-none" required />
           </div>
 
           {/* Campo de Senha */}
           <div className="relative mb-4 w-full ">
             <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 " />
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Senha"
-              className="w-full p-2 pl-10 bg-transparent text-white border-b-2 border-gray-600 outline-none"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            >
+            <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Senha" className="w-full p-2 pl-10 bg-transparent text-white border-b-2 border-gray-600 outline-none" required />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
               {showPassword ? <FiEyeOff /> : <FiEye />}
             </button>
           </div>
 
-          {/* Exibição de erro */}
-          {error && <p className="text-red-500 text-xs">{error}</p>}
-
           {/* Botão de Login */}
-          <button
-            type="submit"
-            className="w-full py-2 bg-blue-600 text-white rounded-md font-medium text-sm transition duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            disabled={loading}
-          >
+          <button type="submit" className="w-full py-2 bg-blue-600 text-white rounded-md font-medium text-sm transition duration-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" disabled={loading}>
             {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
 
         {/* Botão de Criar Conta */}
-        <button
-          onClick={goToRegister}
-          className="w-full py-2 mt-4 bg-transparent text-blue-500 rounded-md font-medium text-sm transition duration-200 hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
+        <button onClick={goToRegister} className="w-full py-2 mt-4 bg-transparent text-blue-500 rounded-md font-medium text-sm transition duration-200 hover:bg-blue-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
           Criar Conta
         </button>
       </div>
