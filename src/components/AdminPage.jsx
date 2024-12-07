@@ -46,10 +46,10 @@ const PageAdmin = () => {
     try {
       const userRef = doc(db, "data-users", userId);
       await updateDoc(userRef, {
-        paymentStatus: "concluído", // Atualiza o status do pagamento
+        paymentStatus: "concluído", // Atualiza o status para concluído
       });
       alert("Pagamento confirmado!");
-      fetchUsers(); // Atualiza os dados após a confirmação
+      fetchUsers(); // Atualiza a lista de usuários após a confirmação
     } catch (error) {
       console.error("Erro ao confirmar pagamento:", error);
       alert("Erro ao confirmar pagamento.");
@@ -113,7 +113,7 @@ const PageAdmin = () => {
               <h3 className="text-lg text-gray-400 font-medium mt-2">{user.nickname}</h3>
 
               {/* Botão de Confirmar Pagamento, fora do dropdown e abaixo do apelido */}
-              {user.paymentStatus !== "concluído" && (
+              {user.paymentStatus === "aguardando" && (
                 <button
                   onClick={() => handleConfirmPayment(user.id)} // Confirma pagamento ao clicar
                   className="mt-4 py-2 px-6 bg-green-500 text-white rounded-full text-sm shadow-md hover:bg-green-600 transition duration-300"

@@ -31,6 +31,10 @@ const Welcome = () => {
               const userData = userDoc.data();
               setNickname(userData.nickname);
               setPhone(userData.phone);
+              if (userData.paymentStatus === "concluído") {
+                setPaymentConfirmed(true);
+                setIsButtonDisabled(true);
+              }
             }
           } catch (error) {
             console.error("Erro ao buscar dados do usuário:", error);
@@ -67,13 +71,13 @@ const Welcome = () => {
   const handlePayment = async () => {
     setPaymentConfirmed(true); // Marca o pagamento como confirmado
     setIsButtonDisabled(true); // Desabilita o botão após confirmação
-    // Atualiza o status de pagamento no Firestore
+    // Atualiza o status de pagamento no Firestore para "aguardando"
     const userRef = doc(db, "data-users", user.uid);
     try {
       await updateDoc(userRef, {
-        paymentStatus: "pendente", // Define o status de pagamento como "pendente"
+        paymentStatus: "aguardando", // Atualiza o status para aguardando
       });
-      console.log("Status de pagamento atualizado para 'pendente'.");
+      console.log("Status de pagamento atualizado para 'aguardando'.");
     } catch (error) {
       console.error("Erro ao atualizar status de pagamento:", error);
     }
@@ -133,7 +137,7 @@ const Welcome = () => {
 
       {/* Botão de logout posicionado no canto inferior direito */}
       <motion.div className="absolute bottom-10 right-10" initial={{ x: 100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
-        <button onClick={handleLogout} className="py-2 px-6 bg-red-500 text-white rounded-full text-sm shadow-md hover:bg-red-600 transition duration-300">
+        <button onClick={handleLogout} className="py-2 px-6 bg-red-500 text-white rounded-full text-sm shadow-md hover:bg-red-600 transition duration-0.3">
           Sair
         </button>
       </motion.div>
