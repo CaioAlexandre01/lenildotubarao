@@ -73,12 +73,7 @@ const PageAdmin = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100">
-        <motion.div
-          className="text-center p-6 bg-white rounded-lg shadow-lg"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
+        <motion.div className="text-center p-6 bg-white rounded-lg shadow-lg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
           <p className="text-lg font-semibold text-gray-700">Carregando...</p>
         </motion.div>
       </div>
@@ -91,12 +86,7 @@ const PageAdmin = () => {
   };
 
   return (
-    <motion.div
-      className="min-h-screen bg-[#0E0F11] text-white p-5"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <motion.div className="min-h-screen bg-[#0E0F11] text-white p-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
       <h2 className="text-2xl font-semibold text-center mb-6">Painel de Administração</h2>
 
       {users.length === 0 ? (
@@ -116,11 +106,7 @@ const PageAdmin = () => {
               <div className="flex items-center justify-between text-xl font-semibold text-gray-300">
                 {user.fullName}
                 {/* Ícone de pagamento */}
-                {user.paymentStatus === "concluído" ? (
-                  <IoMdCheckmarkCircle className="text-green-500" size={24} />
-                ) : (
-                  <IoMdCloseCircle className="text-red-500" size={24} />
-                )}
+                {user.paymentStatus === "concluído" ? <IoMdCheckmarkCircle className="text-green-500" size={24} /> : <IoMdCloseCircle className="text-red-500" size={24} />}
               </div>
 
               {/* Exibindo o apelido como subtítulo */}
@@ -138,13 +124,7 @@ const PageAdmin = () => {
 
               {/* Dropdown com as informações adicionais */}
               {activeIndex === index && (
-                <motion.div
-                  className="mt-3 space-y-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
+                <motion.div className="mt-3 space-y-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
                   <p className="text-sm text-gray-400">Email: {user.email}</p>
                   <p className="text-sm text-gray-400">Faixa: {user.belt}</p>
                 </motion.div>

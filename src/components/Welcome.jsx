@@ -48,9 +48,7 @@ const Welcome = () => {
 
     // Atualiza a data atual
     const today = new Date();
-    const months = [
-      "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-    ];
+    const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
     const formattedDate = `${today.getDate()} de ${months[today.getMonth()]} de ${today.getFullYear()}`; // Formata como "dia de mês de ano"
     setCurrentDate(formattedDate);
 
@@ -85,12 +83,7 @@ const Welcome = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-100">
-        <motion.div
-          className="text-center p-6 bg-white rounded-lg shadow-lg"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        >
+        <motion.div className="text-center p-6 bg-white rounded-lg shadow-lg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
           <p className="text-lg font-semibold text-gray-700">Carregando...</p>
         </motion.div>
       </div>
@@ -103,41 +96,21 @@ const Welcome = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <motion.div
-        className="text-center p-6 bg-white rounded-lg shadow-lg"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <motion.h1
-          className="text-2xl font-bold text-gray-700"
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          Bem-vindo, {nickname || 'Usuário'}!
+      <motion.div className="text-center p-6 bg-white rounded-lg shadow-lg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+        <motion.h1 className="text-2xl font-bold text-gray-700" initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+          Bem-vindo, {nickname || "Usuário"}!
         </motion.h1>
         <p className="text-gray-500 mt-2">Você está logado como {user.email}</p>
 
         {/* Exibe o número de telefone */}
         {phone && (
-          <motion.p
-            className="mt-2 text-gray-700 font-semibold"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
+          <motion.p className="mt-2 text-gray-700 font-semibold" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
             Número de telefone: {phone}
           </motion.p>
         )}
 
         {/* Exibe a data atual */}
-        <motion.p
-          className="mt-4 text-gray-700 font-semibold"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
+        <motion.p className="mt-4 text-gray-700 font-semibold" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
           {currentDate}
         </motion.p>
 
@@ -145,35 +118,22 @@ const Welcome = () => {
         <button
           onClick={handlePayment}
           disabled={isButtonDisabled} // Desabilita o botão quando isButtonDisabled for true
-          className={`mt-4 py-2 px-6 ${isButtonDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-700'} text-white rounded-full text-sm shadow-md transition duration-300`}
+          className={`mt-4 py-2 px-6 ${isButtonDisabled ? "bg-gray-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700"} text-white rounded-full text-sm shadow-md transition duration-300`}
         >
           Confirmar Pagamento
         </button>
 
         {/* Exibe a mensagem de pagamento confirmado */}
         {paymentConfirmed && (
-          <motion.p
-            className="mt-4 text-green-600 font-semibold"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6 }}
-          >
+          <motion.p className="mt-4 text-green-600 font-semibold" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
             Pagamento confirmado. Oss!
           </motion.p>
         )}
       </motion.div>
 
       {/* Botão de logout posicionado no canto inferior direito */}
-      <motion.div
-        className="absolute bottom-10 right-10"
-        initial={{ x: 100, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <button
-          onClick={handleLogout}
-          className="py-2 px-6 bg-red-500 text-white rounded-full text-sm shadow-md hover:bg-red-600 transition duration-300"
-        >
+      <motion.div className="absolute bottom-10 right-10" initial={{ x: 100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
+        <button onClick={handleLogout} className="py-2 px-6 bg-red-500 text-white rounded-full text-sm shadow-md hover:bg-red-600 transition duration-300">
           Sair
         </button>
       </motion.div>
