@@ -14,6 +14,7 @@ const Welcome = () => {
   const [loading, setLoading] = useState(true); // Estado de carregamento
   const [paymentConfirmed, setPaymentConfirmed] = useState(false); // Estado para controle do pagamento
   const [isButtonDisabled, setIsButtonDisabled] = useState(false); // Estado para controlar a desabilitação do botão
+  const [paymentDate, setPaymentDate] = useState(""); // Estado para armazenar a data de pagamento
   const navigate = useNavigate(); // Para navegação
 
   useEffect(() => {
@@ -31,6 +32,7 @@ const Welcome = () => {
               const userData = userDoc.data();
               setNickname(userData.nickname);
               setPhone(userData.phone);
+              setPaymentDate(userData.paymentDate || "Não informado"); // Atualiza a data de pagamento
               if (userData.paymentStatus === "concluído") {
                 setPaymentConfirmed(true);
                 setIsButtonDisabled(true);
@@ -53,7 +55,7 @@ const Welcome = () => {
     // Atualiza a data atual
     const today = new Date();
     const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    const formattedDate = `${today.getDate()} de ${months[today.getMonth()]} de ${today.getFullYear()}`; // Formata como "dia de mês de ano"
+    const formattedDate = `${today.getDate().toString().padStart(2, "0")}/${(today.getMonth() + 1).toString().padStart(2, "0")}/${today.getFullYear()}`; // Formata como "dd/mm/yyyy"
     setCurrentDate(formattedDate);
 
     return () => unsubscribe(); // Limpa a assinatura quando o componente é desmontado
@@ -71,13 +73,22 @@ const Welcome = () => {
   const handlePayment = async () => {
     setPaymentConfirmed(true); // Marca o pagamento como confirmado
     setIsButtonDisabled(true); // Desabilita o botão após confirmação
-    // Atualiza o status de pagamento no Firestore para "aguardando"
+    
+    // Agora formatamos a data para "dd/mm/yyyy" antes de salvar
+    const formattedPaymentDate = currentDate; // A data já foi formatada no useEffect
+
+    // Atualiza o status de pagamento no Firestore
     const userRef = doc(db, "data-users", user.uid);
     try {
       await updateDoc(userRef, {
-        paymentStatus: "aguardando", // Atualiza o status para aguardando
+        paymentStatus: "aguardando", // Atualiza o status para "aguardando"
+        paymentDate: formattedPaymentDate, // Aqui é onde estamos usando a data formatada
       });
-      console.log("Status de pagamento atualizado para 'aguardando'.");
+
+      // Atualiza o estado do paymentDate para a data de pagamento confirmada
+      setPaymentDate(formattedPaymentDate); // Atualiza o estado para exibir a data
+
+      console.log("Status de pagamento atualizado para 'aguardando' e paymentDate com a data correta.");
     } catch (error) {
       console.error("Erro ao atualizar status de pagamento:", error);
     }
@@ -106,17 +117,12 @@ const Welcome = () => {
         </motion.h1>
         <p className="text-gray-500 mt-2">Você está logado como {user.email}</p>
 
-        {/* Exibe o número de telefone */}
-        {phone && (
-          <motion.p className="mt-2 text-gray-700 font-semibold" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
-            Número de telefone: {phone}
+        {/* Exibe a data de pagamento */}
+        {paymentDate && (
+          <motion.p className="mt-4 text-gray-700 font-semibold" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+            Último pagamento: {paymentDate === "Não informado" ? "Não informado" : paymentDate}
           </motion.p>
         )}
-
-        {/* Exibe a data atual */}
-        <motion.p className="mt-4 text-gray-700 font-semibold" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
-          {currentDate}
-        </motion.p>
 
         {/* Botão de Confirmar Pagamento */}
         <button

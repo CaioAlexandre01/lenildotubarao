@@ -32,8 +32,16 @@ const PageAdmin = () => {
   const fetchUsers = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "data-users"));
-      const usersList = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setUsers(usersList); // Atualiza o estado com a lista de usuários
+      const usersList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        paymentDate: doc.data().paymentDate, // Aqui estamos pegando a data de pagamento
+      }));
+
+      // Filtra os usuários para excluir os que são admin
+      const filteredUsers = usersList.filter(user => user.role !== "admin"); // Exclui os usuários com role "admin"
+
+      setUsers(filteredUsers); // Atualiza o estado com a lista de usuários filtrada
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
     } finally {
@@ -97,20 +105,23 @@ const PageAdmin = () => {
             <motion.div
               key={index}
               onClick={() => toggleDropdown(index)} // Ação para mostrar/esconder dropdown ao clicar no contêiner
-              className="bg-[#1A1C22] rounded-lg shadow-lg p-5 hover:bg-gray-700 transition duration-300 cursor-pointer"
+              className="bg-[#1A1C22] rounded-lg shadow-lg p-3 hover:bg-gray-700 transition duration-300 cursor-pointer"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="flex items-center justify-between text-xl font-semibold text-gray-300">
+              <div className="flex items-center justify-between text-base font-semibold text-gray-300">
                 {user.fullName}
                 {/* Ícone de pagamento */}
                 {user.paymentStatus === "concluído" ? <IoMdCheckmarkCircle className="text-green-500" size={24} /> : <IoMdCloseCircle className="text-red-500" size={24} />}
               </div>
 
               {/* Exibindo o apelido como subtítulo */}
-              <h3 className="text-lg text-gray-400 font-medium mt-2">{user.nickname}</h3>
+              <h3 className="text-sm text-gray-400 font-medium ">({user.nickname})</h3>
+
+              {/* Exibindo a data de pagamento */}
+              {user.paymentDate && <p className="text-sm text-gray-400 mt-1">Último pagamento: {user.paymentDate}</p>}
 
               {/* Botão de Confirmar Pagamento, fora do dropdown e abaixo do apelido */}
               {user.paymentStatus === "aguardando" && (
@@ -124,7 +135,7 @@ const PageAdmin = () => {
 
               {/* Dropdown com as informações adicionais */}
               {activeIndex === index && (
-                <motion.div className="mt-3 space-y-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+                <motion.div className="mt-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
                   <p className="text-sm text-gray-400">Email: {user.email}</p>
                   <p className="text-sm text-gray-400">Faixa: {user.belt}</p>
                 </motion.div>
