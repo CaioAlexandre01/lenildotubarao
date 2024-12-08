@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { db } from "../firebase/firebaseConfig"; // Importa a configuração do Firebase
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore"; // Funções do Firestore
 import { motion } from "framer-motion";
-import { getAuth, onAuthStateChanged } from "firebase/auth"; // Importando autenticação do Firebase
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; // Importando autenticação do Firebase
 import { useNavigate } from "react-router-dom"; // Para redirecionamento de navegação
 import { IoMdCloseCircle, IoMdCheckmarkCircle } from "react-icons/io"; // Ícone de X mais estilizado
 
@@ -64,6 +64,17 @@ const PageAdmin = () => {
     }
   };
 
+  // Função para logout
+  const handleLogout = async () => {
+    const auth = getAuth();
+    try {
+      await signOut(auth); // Realiza o logout
+      navigate("/"); // Redireciona para a página de login
+    } catch (err) {
+      console.error("Erro ao fazer logout:", err.message);
+    }
+  };
+
   // useEffect para verificar a autenticação
   useEffect(() => {
     const unsubscribe = checkAuthentication(); // Verifica se o usuário está autenticado
@@ -96,6 +107,16 @@ const PageAdmin = () => {
   return (
     <motion.div className="min-h-screen bg-[#0E0F11] text-white p-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
       <h2 className="text-2xl font-semibold text-center mb-6">Painel de Administração</h2>
+
+      {/* Botão de logout */}
+      <motion.div className="absolute bottom-10 right-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+        <button
+          onClick={handleLogout}
+          className="py-2 px-6 bg-red-500 text-white rounded-full text-sm shadow-md hover:bg-red-600 transition duration-300"
+        >
+          Sair
+        </button>
+      </motion.div>
 
       {users.length === 0 ? (
         <p className="text-center text-gray-400">Nenhum usuário registrado.</p>
