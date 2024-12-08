@@ -8,9 +8,11 @@ import { IoMdCloseCircle, IoMdCheckmarkCircle } from "react-icons/io"; // Ícone
 
 const PageAdmin = () => {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeIndex, setActiveIndex] = useState(null); // Para controle do dropdown
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para o termo de busca
   const navigate = useNavigate(); // Hook de navegação do react-router-dom
 
   // Verifica o estado da autenticação do usuário
@@ -42,6 +44,7 @@ const PageAdmin = () => {
       const filteredUsers = usersList.filter(user => user.role !== "admin"); // Exclui os usuários com role "admin"
 
       setUsers(filteredUsers); // Atualiza o estado com a lista de usuários filtrada
+      setFilteredUsers(filteredUsers); // Inicialmente, a lista filtrada é a mesma
     } catch (error) {
       console.error("Erro ao buscar usuários:", error);
     } finally {
@@ -73,6 +76,17 @@ const PageAdmin = () => {
     } catch (err) {
       console.error("Erro ao fazer logout:", err.message);
     }
+  };
+
+  // Função para filtrar usuários com base no termo de busca
+  const handleSearch = (event) => {
+    const term = event.target.value.toLowerCase();
+    setSearchTerm(term);
+    // Filtra os usuários pelo nome ou apelido
+    const filtered = users.filter((user) =>
+      user.fullName.toLowerCase().includes(term) || user.nickname.toLowerCase().includes(term)
+    );
+    setFilteredUsers(filtered); // Atualiza os usuários filtrados
   };
 
   // useEffect para verificar a autenticação
@@ -108,6 +122,17 @@ const PageAdmin = () => {
     <motion.div className="min-h-screen bg-[#0E0F11] text-white p-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
       <h2 className="text-2xl font-semibold text-center mb-6">Painel de Administração</h2>
 
+      {/* Barra de Pesquisa */}
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Buscar por nome ou apelido"
+          value={searchTerm}
+          onChange={handleSearch}
+          className="w-full px-4 py-2 bg-[#1A1C22] text-white rounded-lg shadow-md border border-gray-600"
+        />
+      </div>
+
       {/* Botão de logout */}
       <motion.div className="absolute bottom-10 right-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
         <button
@@ -118,11 +143,11 @@ const PageAdmin = () => {
         </button>
       </motion.div>
 
-      {users.length === 0 ? (
-        <p className="text-center text-gray-400">Nenhum usuário registrado.</p>
+      {filteredUsers.length === 0 ? (
+        <p className="text-center text-gray-400">Nenhum usuário encontrado.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {users.map((user, index) => (
+          {filteredUsers.map((user, index) => (
             <motion.div
               key={index}
               onClick={() => toggleDropdown(index)} // Ação para mostrar/esconder dropdown ao clicar no contêiner
