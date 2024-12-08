@@ -27,7 +27,7 @@ const Register = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
   
-      // Aqui você define o papel do usuário (role)
+      // Definir os dados do usuário
       const userData = {
         fullName,
         nickname,
@@ -37,24 +37,23 @@ const Register = () => {
         belt,
         email,
         uid: user.uid,
-        role: "student", // Definindo o papel como 'student' (ou pode ser 'admin' para admins)
+        role: "student", // Definindo o papel como 'student'
       };
   
-      // Salva os dados no Firestore
+      // Salvar os dados no Firestore
       await setDoc(doc(db, "data-users", user.uid), userData);
   
       alert("Cadastro realizado com sucesso!");
-      navigate("/"); // Pode redirecionar para uma página específica, como a página de login
+      navigate("/"); // Redirecionar para a página de login ou inicial
     } catch (err) {
-      setError(err.message); // Exibe a mensagem de erro do Firebase
+      setError(err.message); // Exibir mensagem de erro
     } finally {
       setLoading(false);
     }
   };
-  
 
   const handleBack = () => {
-    navigate("/");
+    navigate("/"); // Redirecionar para a página de login
   };
 
   const generateYears = () => {
@@ -83,7 +82,7 @@ const Register = () => {
 
   return (
     <motion.div 
-      className="h-auto w-screen p-5 border-none rounded-lg shadow-lg bg-[#0E0F11] overflow-hidden flex flex-col justify-center items-center"
+      className="min-h-screen w-screen p-5 border-none rounded-lg shadow-lg bg-[#0E0F11] overflow-hidden flex flex-col justify-center items-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}

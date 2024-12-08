@@ -33,9 +33,24 @@ const Welcome = () => {
               setNickname(userData.nickname);
               setPhone(userData.phone);
               setPaymentDate(userData.paymentDate || "Não informado"); // Atualiza a data de pagamento
-              if (userData.paymentStatus === "concluído") {
-                setPaymentConfirmed(true);
-                setIsButtonDisabled(true);
+
+              // Verifica se o pagamento já passou de 30 dias
+              if (userData.paymentDate) {
+                const paymentDate = new Date(userData.paymentDate.split("/").reverse().join("-")); // Converte data de pagamento (dd/mm/yyyy) para formato Date
+                const currentDate = new Date();
+                const diffTime = Math.abs(currentDate - paymentDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Converte a diferença para dias
+
+                if (diffDays > 30) {
+                  await updateDoc(userDocRef, {
+                    paymentStatus: "pendente", // Altera status para pendente se passaram mais de 30 dias
+                  });
+                } else {
+                  if (userData.paymentStatus === "concluído") {
+                    setPaymentConfirmed(true);
+                    setIsButtonDisabled(true);
+                  }
+                }
               }
             }
           } catch (error) {
@@ -59,7 +74,8 @@ const Welcome = () => {
     setCurrentDate(formattedDate);
 
     return () => unsubscribe(); // Limpa a assinatura quando o componente é desmontado
-  }, [navigate]);
+}, [navigate]);
+
 
   const handleLogout = async () => {
     try {
@@ -92,7 +108,8 @@ const Welcome = () => {
     } catch (error) {
       console.error("Erro ao atualizar status de pagamento:", error);
     }
-  };
+};
+
 
   // Renderiza um carregando enquanto as informações não estão prontas
   if (loading) {
