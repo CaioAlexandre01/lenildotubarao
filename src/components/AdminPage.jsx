@@ -119,7 +119,17 @@ const PageAdmin = () => {
   };
 
   return (
+    
     <motion.div className="min-h-screen bg-[#0E0F11] text-white p-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+            {/* Botão de logout */}
+            <motion.div className="w-full flex justify-end py-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+        <button
+          onClick={handleLogout}
+          className="py-2 px-6 bg-red-500 text-white rounded-full text-sm shadow-md hover:bg-red-600 transition duration-300"
+        >
+          Sair
+        </button>
+      </motion.div>
       <h2 className="text-2xl font-semibold text-center mb-6">Painel de Administração</h2>
 
       {/* Barra de Pesquisa */}
@@ -132,16 +142,6 @@ const PageAdmin = () => {
           className="w-full px-4 py-2 bg-[#1A1C22] text-white rounded-lg shadow-md border border-gray-600"
         />
       </div>
-
-      {/* Botão de logout */}
-      <motion.div className="absolute bottom-10 right-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-        <button
-          onClick={handleLogout}
-          className="py-2 px-6 bg-red-500 text-white rounded-full text-sm shadow-md hover:bg-red-600 transition duration-300"
-        >
-          Sair
-        </button>
-      </motion.div>
 
       {filteredUsers.length === 0 ? (
         <p className="text-center text-gray-400">Nenhum usuário encontrado.</p>
